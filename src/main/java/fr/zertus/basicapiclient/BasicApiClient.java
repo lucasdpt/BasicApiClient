@@ -12,13 +12,16 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.ssl.SSLContextBuilder;
 
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -33,6 +36,9 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -170,6 +176,9 @@ public class BasicApiClient {
      */
     @Singular(ignoreNullCollections = true, value = "xmlSeeAlso")
     private final List<Class<?>> xmlSeeAlso;
+
+    @Builder.Default
+    private final boolean bypassSsl = false;
 
 
     /**
@@ -656,6 +665,15 @@ public class BasicApiClient {
                     }
                 }
             });
+        }
+        if (bypassSsl) {
+            try {
+                SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, (certificate, authType) -> true).build();
+                builder.setSSLContext(sslContext);
+                builder.setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE);
+            } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
+                L.warning("Cannot bypass SSL : " + e.getMessage());
+            }
         }
         return builder.setDefaultRequestConfig(requestBuilder.build()).build();
     }
