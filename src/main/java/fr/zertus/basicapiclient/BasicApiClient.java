@@ -180,6 +180,9 @@ public class BasicApiClient {
     @Builder.Default
     private final boolean bypassSsl = false;
 
+    @Builder.Default
+    private final String cookieSpec = "";
+
 
     /**
      * Called before sending the request to add information in request
@@ -675,6 +678,7 @@ public class BasicApiClient {
                 L.warning("Cannot bypass SSL : " + e.getMessage());
             }
         }
+        requestBuilder.setCookieSpec(cookieSpec);
         return builder.setDefaultRequestConfig(requestBuilder.build()).build();
     }
 

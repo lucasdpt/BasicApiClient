@@ -6,7 +6,7 @@
 
     <groupId>fr.zertus</groupId>
     <artifactId>basicapiclient</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
