@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.*;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
@@ -181,7 +182,7 @@ public class BasicApiClient {
     private final boolean bypassSsl = false;
 
     @Builder.Default
-    private final String cookieSpec = "";
+    private final CookieStore cookies = null;
 
 
     /**
@@ -678,7 +679,9 @@ public class BasicApiClient {
                 L.warning("Cannot bypass SSL : " + e.getMessage());
             }
         }
-        requestBuilder.setCookieSpec(cookieSpec);
+        if (cookies != null) {
+            builder.setDefaultCookieStore(cookies);
+        }
         return builder.setDefaultRequestConfig(requestBuilder.build()).build();
     }
 
