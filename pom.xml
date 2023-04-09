@@ -16,7 +16,7 @@
 
     <distributionManagement>
         <repository>
-            <id>zenmaven-main</id>
+            <id>zenmaven-releases</id>
             <url>https://maven.zertus.fr/releases</url>
         </repository>
     </distributionManagement>
